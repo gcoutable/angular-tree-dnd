@@ -95,7 +95,21 @@
         }]
 );
 
-angular.module('ntt.TreeDnD')    .directive(    'treeDndNodeHandle', function () {        return {            restrict: 'A',            scope:    true,            link:     function (scope, element, attrs) {                scope.$type = 'TreeDnDNodeHandle';                if (scope.$class.handle) {                    element.addClass(scope.$class.handle);                }            }        };    });
+angular.module('ntt.TreeDnD')
+    .directive(
+    'treeDndNodeHandle', function () {
+        return {
+            restrict: 'A',
+            scope:    true,
+            link:     function (scope, element, attrs) {
+                scope.$type = 'TreeDnDNodeHandle';
+                if (scope.$class.handle) {
+                    element.addClass(scope.$class.handle);
+                }
+            }
+        };
+    }
+);
 
 angular.module('ntt.TreeDnD')
     .directive(
@@ -3079,17 +3093,23 @@ angular.module('ntt.TreeDnD')
                     }
                 },
                 remove_node:                       function (node) {
+                    var lastElement = false;
                     node = node || tree.selected_node;
-                    if (typeof node === 'object') {
-                        if (node.__parent_real__ !== null) {
+                    if (node) {
+                        if (node.__parent_real__ !== null) { //!=null
                             _parent = tree.get_parent(node).__children__;
                         } else {
                             _parent = scope.treeData;
+                            if(scope.treeData.length === 1) {
+                                lastElement = true;
+                            }
                         }
 
                         _parent.splice(node.__index__, 1);
-
-                        tree.reload_data();
+                        if(lastElement) {
+                            //delete(scope.tree_nodes);
+                            scope.tree_nodes = [];
+                        }
 
                         if (tree.selected_node === node) {
                             tree.selected_node = null;
